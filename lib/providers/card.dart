@@ -9,7 +9,7 @@ class CardItem {
   CardItem({this.id, this.title, this.price, this.quantity});
 }
 
-class Card with ChangeNotifier {
+class Cart with ChangeNotifier {
   Map<String, CardItem> _items;
 
   Map<String, CardItem> get items {
