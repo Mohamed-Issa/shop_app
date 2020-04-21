@@ -1,37 +1,43 @@
 import 'package:flutter/foundation.dart';
 
-class CardItem {
+class CartItem {
   final String id;
   final String title;
   final int quantity;
   final double price;
 
-  CardItem({this.id, this.title, this.price, this.quantity});
+  CartItem({this.id, this.title, this.price, this.quantity});
 }
 
 class Cart with ChangeNotifier {
-  Map<String, CardItem> _items;
+  Map<String, CartItem> _items = {};
 
-  Map<String, CardItem> get items {
+  Map<String, CartItem> get items {
     return {..._items};
+  }
+
+  int get itemCount {
+    return  _items.length;
   }
 
   void addItem(String title, double price, String productId) {
     if (_items.containsKey(productId)) {
-      _items.update(productId, (existingCardItem) =>
-          CardItem(id: existingCardItem.id,
+      _items.update(
+          productId,
+          (existingCardItem) => CartItem(
+              id: existingCardItem.id,
               title: existingCardItem.title,
               price: existingCardItem.price,
               quantity: existingCardItem.quantity + 1));
     } else {
       _items.putIfAbsent(
           productId,
-              () =>
-              CardItem(
-                  id: DateTime.now().toString(),
-                  price: price,
-                  title: title,
-                  quantity: 1));
+          () => CartItem(
+              id: DateTime.now().toString(),
+              price: price,
+              title: title,
+              quantity: 1));
     }
+    notifyListeners();
   }
 }
