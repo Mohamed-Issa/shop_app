@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -13,6 +14,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _imageFocusNode = FocusNode();
+  final _form = GlobalKey<FormState>();
+  var _editProduct =
+      Product(id: null, price: 0, title: '', description: '', imageUrl: '');
 
   @override
   void initState() {
@@ -34,15 +38,30 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (!_imageFocusNode.hasFocus) setState(() {});
   }
 
+  void _saveForm() {
+    _form.currentState.save();
+    print(_editProduct.title);
+    print(_editProduct.price);
+    print(_editProduct.description);
+    print(_editProduct.imageUrl);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _saveForm,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form,
           child: ListView(
             children: <Widget>[
               TextFormField(
@@ -50,6 +69,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                onSaved: (value) {
+                  _editProduct = Product(
+                      id: null,
+                      title: value,
+                      description: _editProduct.description,
+                      imageUrl: _editProduct.imageUrl,
+                      price: _editProduct.price);
                 },
               ),
               TextFormField(
@@ -60,12 +87,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                onSaved: (value) {
+                  _editProduct = Product(
+                      id: null,
+                      title: _editProduct.title,
+                      description: _editProduct.description,
+                      imageUrl: _editProduct.imageUrl,
+                      price: double.parse(value));
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+                onSaved: (value) {
+                  _editProduct = Product(
+                      id: null,
+                      title: _editProduct.title,
+                      description: value,
+                      imageUrl: _editProduct.imageUrl,
+                      price: _editProduct.price);
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -90,6 +133,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController,
                       focusNode: _imageFocusNode,
+                      onFieldSubmitted: (_) {
+                        _saveForm();
+                      },
+                      onSaved: (value) {
+                        _editProduct = Product(
+                            id: null,
+                            title: _editProduct.title,
+                            description: _editProduct.description,
+                            imageUrl: value,
+                            price: _editProduct.price);
+                      },
                     ),
                   ),
                 ],
