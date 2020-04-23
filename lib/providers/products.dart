@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
 
-class ProductsProvider with ChangeNotifier {
+class Products with ChangeNotifier {
   List<Product> _items = [
     Product(
       id: 'p1',
@@ -64,7 +64,16 @@ class ProductsProvider with ChangeNotifier {
 //    notifyListeners();
 //  }
 
-  void addProduct() {
+  void addProduct(Product product) {
+    final newProduct = Product(
+        title: product.title,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        description: product.description,
+        id: DateTime.now().toString());
+
+    _items.add(newProduct);
+//    _items.insert(0, newProduct); // at the start of the list
     notifyListeners();
   }
 }
