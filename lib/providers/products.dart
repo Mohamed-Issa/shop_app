@@ -67,6 +67,17 @@ class Products with ChangeNotifier {
 //    notifyListeners();
 //  }
 
+  Future<void> fetchAndSetProducts() async {
+    const url = 'https://shop-app-e46df.firebaseio.com/products.json';
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
   Future<void> addProduct(Product product) async {
     const url = 'https://shop-app-e46df.firebaseio.com/products.json';
     try {
