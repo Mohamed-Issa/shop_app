@@ -140,7 +140,20 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+    final url = 'https://shop-app-e46df.firebaseio.com/products/$id';
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var exitingProductData = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+    http.delete(url).then((response) {
+//      print(response.statusCode);
+    if(response.statusCode >= 400){
+
+    }
+      exitingProductData = null;
+    }).catchError((_) {
+      _items.insert(existingProductIndex, exitingProductData);
+      notifyListeners();
+    });
   }
 }
