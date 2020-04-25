@@ -5,26 +5,8 @@ import '../widgets/app_drawer.dart';
 import '../providers/orders.dart' show Orders;
 import '../widgets/order_item.dart';
 
-class OrderScreen extends StatefulWidget {
+class OrderScreen extends StatelessWidget {
   static const routeName = '/orders-screen';
-
-  @override
-  _OrderScreenState createState() => _OrderScreenState();
-}
-
-class _OrderScreenState extends State<OrderScreen> {
-  var _isloading = false;
-
-  @override
-  void initState() {
-//    _isloading = true;
-//    Provider.of<Orders>(context, listen: false).fetchAndSetOrders().then((_) {
-//      setState(() {
-//        _isloading = false;
-//      });
-//    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
