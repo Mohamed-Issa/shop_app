@@ -69,8 +69,9 @@ class Products with ChangeNotifier {
 //  }
 
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   Future<void> fetchAndSetProducts() async {
     final url =
@@ -80,6 +81,10 @@ class Products with ChangeNotifier {
       print(json.decode(response.body));
       final extractData = json.decode(response.body) as Map<String, dynamic>;
       if (extractData == null) return;
+      final favUrl =
+          'https://shop-app-e46df.firebaseio.com/userFavorite/$userId.json?auth=$authToken';
+      final userFavorite = await http.get(favUrl);
+      final favData = json.decode(userFavorite.body);
       final List<Product> loadedData = [];
       extractData.forEach((prodId, prodData) {
         loadedData.add(Product(
@@ -88,7 +93,7 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavourite: prodData['isFavorite'],
+          isFavourite: favData == null ? false : favData[prodId] ?? false,
         ));
       });
       _items = loadedData;
@@ -100,13 +105,13 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = 'https://shop-app-e46df.firebaseio.com/products.json?auth=$authToken';
+    final url =
+        'https://shop-app-e46df.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.post(url,
           body: json.encode({
             'title': product.title,
             'description': product.description,
-            'isFavorite': product.isFavourite,
             'price': product.price,
             'imageUrl': product.imageUrl
           }));
@@ -131,7 +136,8 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final productIndex = _items.indexWhere((prod) => prod.id == id);
     if (productIndex >= 0) {
-      final url = 'https://shop-app-e46df.firebaseio.com/products/$id.json?auth=$authToken';
+      final url =
+          'https://shop-app-e46df.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -147,7 +153,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://shop-app-e46df.firebaseio.com/products/$id.json?auth=$authToken';
+    final url =
+        'https://shop-app-e46df.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var exitingProductData = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
