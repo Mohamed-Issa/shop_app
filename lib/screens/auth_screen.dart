@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shopapp/models/http_exception.dart';
 import '../providers/auth.dart';
 
+
 enum AuthMode { Signup, Login }
 
 class AuthScreen extends StatelessWidget {
