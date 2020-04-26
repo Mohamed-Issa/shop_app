@@ -78,4 +78,11 @@ class Auth with ChangeNotifier {
 //        }));
 //    print(json.decode(response.body));
   }
+
+  void logOut() {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    notifyListeners();
+  }
 }
